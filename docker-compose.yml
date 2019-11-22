@@ -1,0 +1,49 @@
+version: '3.3'
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  home-dir:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    restart: on-failure
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - ./docker/app/app-entrypoint.sh:/app-entrypoint.sh:ro
+      - .:/app:cached
+      - home-dir:/home/user:cached
+    env_file:
+      - ./docker/docker-compose.env
+    ports:
+      - '4001:80'
+      - '4002:443'
+    command: 'rr serve -v -d -c /app/.rr.yml'
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_USER: fiaspoly
+      MYSQL_PASSWORD: fiaspoly
+      MYSQL_DATABASE: fiaspoly
+      MYSQL_ROOT_PASSWORD: fiaspoly
+    volumes:
+      - mysql-data:/var/lib/mysql:cached
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
