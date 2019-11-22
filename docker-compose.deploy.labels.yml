@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  app:
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:${DOMAIN};PathPrefixStrip:/fiaspoly
+        - traefik.enable=true
+        - traefik.port=80
+        - traefik.tags=${TRAEFIK_TAG}

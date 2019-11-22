@@ -1,0 +1,58 @@
+# GitLab CI help:      <https://docs.gitlab.com/ee/ci/yaml/>
+# GitLab environments: <https://docs.gitlab.com/ee/ci/variables/>
+image: docker:stable
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+
+variables:
+  APP_IMAGE: $CI_REGISTRY_IMAGE/app
+  MYSQL_VERSION: '11.4'
+
+before_script:
+  - &script-docker-login docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY > /dev/null
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - vendor/
+
+build app image:
+  stage: build
+  only:
+    - branches
+  script:
+    - docker pull "$APP_IMAGE:$CI_COMMIT_REF_SLUG" || docker pull "$APP_IMAGE:master" || true
+    - docker build --cache-from "$APP_IMAGE:$CI_COMMIT_REF_SLUG" --cache-from "$APP_IMAGE:master"
+      -f ./docker/app/Dockerfile
+      --tag "$APP_IMAGE:$CI_COMMIT_REF_SLUG" .
+    - docker push "$APP_IMAGE:$CI_COMMIT_REF_SLUG"
+
+build latest app image:
+  stage: build
+  only:
+    - /^v\d+\.\d+\.\d+$/
+  except:
+    - branches
+  script:
+    - docker pull "$APP_IMAGE:latest" || true
+    - docker build --cache-from "$APP_IMAGE:latest" -f ./docker/app/Dockerfile
+      --tag "$APP_IMAGE:$CI_COMMIT_REF_SLUG"
+      --tag "$APP_IMAGE:latest" .
+    - docker push "$APP_IMAGE:$CI_COMMIT_REF_SLUG"
+    - docker push "$APP_IMAGE:latest"
+
+deploy to somewhere:
+  stage: deploy
+  only:
+    - /^v\d+\.\d+\.\d+$/
+  except:
+    - branches
+  script:
+    - echo "WRite your deploy actions here"
+

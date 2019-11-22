@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  mysql:
+    volumes:
+      - app-mysql-data:/var/lib/mysql:cached
+    deploy:
+      placement:
+        constraints:
+          - node.labels.${STACK_NAME}.app-mysql-data == true
+  app:
+    volumes:
+      - ./docker/app/app-entrypoint.sh:/app-entrypoint.sh:ro
+      - home-dir:/home/user:cached
+volumes:
+  app-mysql-data:
+  app-home-dir:

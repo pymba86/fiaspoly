@@ -1,0 +1,21 @@
+version: '3.3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+      args:
+        APP_ENV: local
+
+
+  migration:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+      args:
+        APP_ENV: local
+    environment:
+      - STARTUP_DELAY=30
+    command: php artisan migrate --force --no-interaction -vvv
+    depends_on:
+      - mysql
