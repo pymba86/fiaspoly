@@ -8,7 +8,6 @@ stages:
   - deploy
 
 before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   - pip install docker-auto-labels
 
 build:
@@ -18,8 +17,9 @@ build:
   except:
     - master
   script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - TAG=latest sh ./scripts/build-push.sh
-    - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
+#    - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
 
 deploy:
   stage: deploy
@@ -32,8 +32,6 @@ deploy:
     DOCKER_TLS_VERIFY: 1
     DOCKER_CERT_PATH: "/certs"
   script:
-    - echo "$DOCKER_HOST"
-    - echo "$TLSCACERT"
     - mkdir -p $DOCKER_CERT_PATH
     - echo "$TLSCACERT" > $DOCKER_CERT_PATH/ca.pem
     - echo "$TLSCERT" > $DOCKER_CERT_PATH/cert.pem
