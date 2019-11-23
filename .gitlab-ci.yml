@@ -1,6 +1,4 @@
-# GitLab CI help:      <https://docs.gitlab.com/ee/ci/yaml/>
-# GitLab environments: <https://docs.gitlab.com/ee/ci/variables/>
-image: docker:stable
+image: tiangolo/docker-with-compose
 
 services:
   - docker:dind
@@ -9,50 +7,49 @@ stages:
   - build
   - deploy
 
-variables:
-  APP_IMAGE: $CI_REGISTRY_IMAGE/app
-  MYSQL_VERSION: '11.4'
-
 before_script:
-  - &script-docker-login docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY > /dev/null
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - pip install docker-auto-labels
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - node_modules/
-    - vendor/
-
-build app image:
-  stage: build
-  only:
-    - branches
-  script:
-    - docker pull "$APP_IMAGE:$CI_COMMIT_REF_SLUG" || docker pull "$APP_IMAGE:master" || true
-    - docker build --cache-from "$APP_IMAGE:$CI_COMMIT_REF_SLUG" --cache-from "$APP_IMAGE:master"
-      -f ./docker/app/Dockerfile
-      --tag "$APP_IMAGE:$CI_COMMIT_REF_SLUG" .
-    - docker push "$APP_IMAGE:$CI_COMMIT_REF_SLUG"
-
-build latest app image:
+build:
   stage: build
   only:
     - /^v\d+\.\d+\.\d+$/
   except:
-    - branches
+    - master
   script:
-    - docker pull "$APP_IMAGE:latest" || true
-    - docker build --cache-from "$APP_IMAGE:latest" -f ./docker/app/Dockerfile
-      --tag "$APP_IMAGE:$CI_COMMIT_REF_SLUG"
-      --tag "$APP_IMAGE:latest" .
-    - docker push "$APP_IMAGE:$CI_COMMIT_REF_SLUG"
-    - docker push "$APP_IMAGE:latest"
+    - TAG=latest sh ./scripts/build-push.sh
+    - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
+  tags:
+    - build
 
-deploy to somewhere:
+deploy:
   stage: deploy
   only:
     - /^v\d+\.\d+\.\d+$/
   except:
-    - branches
+    - master
+  variables:
+    DOCKER_HOST: $DOCKER_HOST
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "/certs"
   script:
-    - echo "WRite your deploy actions here"
+    - mkdir -p $DOCKER_CERT_PATH
+    - echo "$TLSCACERT" > $DOCKER_CERT_PATH/ca.pem
+    - echo "$TLSCERT" > $DOCKER_CERT_PATH/cert.pem
+    - echo "$TLSKEY" > $DOCKER_CERT_PATH/key.pem
+    - >
+      DOMAIN="$DOMAIN"
+      PATH_PREFIX="$PATH_PREFIX"
+      TRAEFIK_TAG="$TRAEFIK_TAG"
+      STACK_NAME="$STACK_NAME"
+      TAG=latest
+      sh ./scripts/deploy.sh
+    - rm -rf $DOCKER_CERT_PATH
+  environment:
+    name: master
+    url: $DOMAIN
+  tags:
+    - swarm
+
 
