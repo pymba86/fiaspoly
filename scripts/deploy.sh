@@ -14,7 +14,7 @@ docker-compose \
 -f docker-compose.shared.env.yml \
 -f docker-compose.deploy.images.yml \
 -f docker-compose.deploy.labels.yml \
--f docker-compose.deploy.networks.yml \
+-f docker-compose.deploy.command.yml \
 -f docker-compose.deploy.volumes-placement.yml \
 config > docker-stack.yml
 
