@@ -1,5 +1,8 @@
 image: tiangolo/docker-with-compose
 
+services:
+  - docker:dind
+
 stages:
   - build
   - deploy
