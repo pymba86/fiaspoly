@@ -1,5 +1,6 @@
 version: '3.3'
 
 networks:
-  traefik_public:
-    external: true
+  default:
+    external:
+      name: ${TRAEFIK_TAG}
