@@ -38,9 +38,7 @@ COPY --from=roadrunner /usr/bin/rr /usr/bin/rr
 RUN set -xe \
     && apk add --no-cache ${PERMANENT_DEPS} \
     && apk add --no-cache --virtual .build-deps ${PHPIZE_DEPS} \
-    # https://github.com/docker-library/php/issues/240
     && apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community gnu-libiconv \
-    && docker-php-ext-configure mbstring --enable-mbstring \
     && docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-configure mysqli --with-mysqli \
     && docker-php-ext-configure pdo_mysql --with-pdo-mysql \
@@ -50,7 +48,6 @@ RUN set -xe \
     && docker-php-ext-install -j$(nproc) \
         mysqli \
         pdo_mysql \
-        mbstring \
         sockets \
         gettext \
         opcache \

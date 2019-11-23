@@ -10,7 +10,7 @@ services:
   app:
     volumes:
       - ./docker/app/app-entrypoint.sh:/app-entrypoint.sh:ro
-      - home-dir:/home/user:cached
+      - app-home-dir:/home/user:cached
 volumes:
   app-mysql-data:
   app-home-dir:

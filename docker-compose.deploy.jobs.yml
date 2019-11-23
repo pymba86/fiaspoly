@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  migration:
+    image: '${DOCKER_IMAGE_APP}:${TAG:-latest}'
+    environment:
+      - STARTUP_DELAY=30
+    command: php artisan migrate --force --no-interaction -vvv
+    depends_on:
+      - mysql
