@@ -4,22 +4,22 @@ services:
   - docker:dind
 
 stages:
-  - build
+#  - build
   - deploy
 
 before_script:
   - pip install docker-auto-labels
 
-build:
-  stage: build
-  only:
-    - /^v\d+\.\d+\.\d+$/
-  except:
-    - master
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - TAG=latest sh ./scripts/build-push.sh
-#    - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
+#build:
+#  stage: build
+#  only:
+#    - /^v\d+\.\d+\.\d+$/
+#  except:
+#    - master
+#  script:
+#    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+#    - TAG=latest sh ./scripts/build-push.sh
+##    - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
 
 deploy:
   stage: deploy
@@ -36,6 +36,7 @@ deploy:
     - echo "$TLSCACERT" > $DOCKER_CERT_PATH/ca.pem
     - echo "$TLSCERT" > $DOCKER_CERT_PATH/cert.pem
     - echo "$TLSKEY" > $DOCKER_CERT_PATH/key.pem
+    - ls $DOCKER_CERT_PATH
     - >
       DOMAIN="$DOMAIN"
       PATH_PREFIX="$PATH_PREFIX"
