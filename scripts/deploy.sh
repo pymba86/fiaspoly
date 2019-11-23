@@ -16,6 +16,7 @@ docker-compose \
 -f docker-compose.deploy.command.yml \
 -f docker-compose.deploy.labels.yml \
 -f docker-compose.deploy.jobs.yml \
+-f docker-compose.deploy.config.yml \
 -f docker-compose.deploy.volumes-placement.yml \
 config > docker-stack.yml
 

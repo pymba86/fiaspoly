@@ -36,15 +36,13 @@ deploy:
     - echo "$TLSCACERT" > $DOCKER_CERT_PATH/ca.pem
     - echo "$TLSCERT" > $DOCKER_CERT_PATH/cert.pem
     - echo "$TLSKEY" > $DOCKER_CERT_PATH/key.pem
-    - ls $DOCKER_CERT_PATH
     - >
       DOMAIN="$DOMAIN"
       PATH_PREFIX="$PATH_PREFIX"
       TRAEFIK_TAG="$TRAEFIK_TAG"
       STACK_NAME="$STACK_NAME"
-      TAG=latest
+      TAG="$CI_COMMIT_REF_NAME"
       sh ./scripts/deploy.sh
-    - rm -rf $DOCKER_CERT_PATH
   environment:
     name: master
     url: $DOMAIN
