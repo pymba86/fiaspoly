@@ -20,8 +20,6 @@ build:
   script:
     - TAG=latest sh ./scripts/build-push.sh
     - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
-  tags:
-    - build
 
 deploy:
   stage: deploy
@@ -49,7 +47,5 @@ deploy:
   environment:
     name: master
     url: $DOMAIN
-  tags:
-    - swarm
 
 
