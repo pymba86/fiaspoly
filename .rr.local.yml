@@ -13,18 +13,23 @@ http:
   # http host to listen.
   address: 0.0.0.0:80
 
-  ssl:
-    # custom https port (default 443)
-    port: 443
+  #  ssl:
+  #    # custom https port (default 443)
+  #    port: 443
+  #
+  #    # force redirect to https connection
+  #    redirect: false
+  #
+  #    # ssl cert
+  #    cert: "/ssl-cert/self-signed.crt"
+  #
+  #    # ssl private key
+  #    key: "/ssl-cert/self-signed.key"
 
-    # force redirect to https connection
-    redirect: false
-
-    # ssl cert
-    cert: "/ssl-cert/self-signed.crt"
-
-    # ssl private key
-    key: "/ssl-cert/self-signed.key"
+  # HTTP service provides FastCGI as frontend
+  fcgi:
+  # FastCGI connection DSN. Supported TCP and Unix sockets.
+  #address: tcp://0.0.0.0:6920
 
   # HTTP service provides HTTP2 transport
   http2:
@@ -56,7 +61,7 @@ http:
     # - `--(not-)refresh-app`
     # - `--(not-)inject-stats-into-request`
     # - `--not-fix-symfony-file-validation`
-    command: "php ./vendor/bin/rr-worker --refresh-app --reset-redis-connections"
+    command: "php ./vendor/bin/rr-worker --refresh-app -- reset-db-connections"
 
     # connection method (pipes, tcp://:9000, unix://socket.unix). default "pipes"
     relay: "pipes"
@@ -67,7 +72,7 @@ http:
       numWorkers: 4
 
       # maximum jobs per worker, 0 - unlimited.
-      maxJobs: 1
+      maxJobs: 24
 
       # for how long worker is allowed to be bootstrapped.
       allocateTimeout: 60
@@ -83,7 +88,7 @@ headers:
 
   # Automatically add headers to every response.
   response:
-    "X-Powered-By": "Microsoft-IIS/8.0"
+    "X-Powered-By": "RoadRunner"
 
 # monitors rr server(s)
 limit:

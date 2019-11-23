@@ -34,7 +34,7 @@ http:
   # HTTP service provides HTTP2 transport
   http2:
     # enable HTTP/2, only with TSL
-    enabled: false
+    enabled: true
 
     # max transfer channels
     maxConcurrentStreams: 128
@@ -61,7 +61,7 @@ http:
     # - `--(not-)refresh-app`
     # - `--(not-)inject-stats-into-request`
     # - `--not-fix-symfony-file-validation`
-    command: "php ./vendor/bin/rr-worker --refresh-app"
+    command: "php ./vendor/bin/rr-worker  --refresh-app -- reset-db-connections"
 
     # connection method (pipes, tcp://:9000, unix://socket.unix). default "pipes"
     relay: "pipes"
@@ -69,10 +69,10 @@ http:
     # worker pool configuration.
     pool:
       # number of workers to be serving.
-      numWorkers: 8
+      numWorkers: 4
 
       # maximum jobs per worker, 0 - unlimited.
-      maxJobs: 48
+      maxJobs: 24
 
       # for how long worker is allowed to be bootstrapped.
       allocateTimeout: 60
@@ -88,7 +88,7 @@ headers:
 
   # Automatically add headers to every response.
   response:
-    "X-Powered-By": "Microsoft-IIS/8.0"
+    "X-Powered-By": "RoadRunner"
 
 # monitors rr server(s)
 limit:

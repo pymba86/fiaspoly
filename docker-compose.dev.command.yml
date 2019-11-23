@@ -9,4 +9,4 @@ services:
       --accessLog \
       --web
   app:
-    command: 'rr serve -v -d -c /app/.rr.yml'
+    command: 'rr serve -v -d -c /app/.rr.local.yml'
