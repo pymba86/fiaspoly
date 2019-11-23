@@ -9,7 +9,6 @@ services:
           - node.labels.${STACK_NAME}.app-mysql-data == true
   app:
     volumes:
-      - ./docker/app/app-entrypoint.sh:/app-entrypoint.sh:ro
       - app-home-dir:/home/user:cached
 volumes:
   app-mysql-data:
