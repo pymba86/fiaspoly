@@ -32,6 +32,8 @@ deploy:
     DOCKER_TLS_VERIFY: 1
     DOCKER_CERT_PATH: "/certs"
   script:
+    - echo "$DOCKER_HOST"
+    - echo "$TLSCACERT"
     - mkdir -p $DOCKER_CERT_PATH
     - echo "$TLSCACERT" > $DOCKER_CERT_PATH/ca.pem
     - echo "$TLSCERT" > $DOCKER_CERT_PATH/cert.pem
