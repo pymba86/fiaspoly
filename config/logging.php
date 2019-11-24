@@ -18,6 +18,8 @@ return [
 
     'default' => env('LOG_CHANNEL', 'stack'),
 
+    'log_level' => env('APP_LOG_LEVEL', 'error'),
+
     /*
     |--------------------------------------------------------------------------
     | Log Channels
