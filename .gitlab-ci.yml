@@ -19,7 +19,7 @@ build:
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - TAG=latest sh ./scripts/build-push.sh
-#    - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
+    - TAG="$CI_COMMIT_REF_NAME" sh ./scripts/build-push.sh
 
 deploy:
   stage: deploy
