@@ -12,10 +12,14 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', 'PolyController@index');
 Route::post('/', 'PolyController@store');
 
-Route::get('/{id:[0-9]+}', 'PolyController@show');
-Route::put('/{id:[0-9]+}', 'PolyController@update');
-Route::delete('/{id:[0-9]+}', 'PolyController@destroy');
+Route::get('{id}', 'PolyController@show')
+    ->where('id', '[0-9]+');
+
+Route::put('{id}', 'PolyController@update')
+    ->where('id', '[0-9]+');
+
+Route::delete('{id}', 'PolyController@destroy')
+    ->where('id', '[0-9]+');
